@@ -418,7 +418,7 @@ D. application
 
 7. 下面语句与 <jsp:getProperty name="aBean" property="jsp"/> 等价的是()。
 A. <%=jsp()%>
-B. <%out.print(aBean.getIsp();%>
+B. <%out.print(aBean.getIsp());%>
 C. <%aBean.setJsp()%>
 D. <%=aBean.setIsp();%>
 答案：B
