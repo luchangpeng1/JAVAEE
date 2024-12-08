@@ -158,19 +158,42 @@
             font-size: 1.5rem;
         }
 
-        /* 移动端菜单按钮 */
-        .menu-toggle {
-            display: none;
-            position: fixed;
-            top: 10px;
-            left: 10px;
+        /* 统一按钮样式 */
+        .menu-toggle, .back-button {
+            position: fixed !important;
+            top: 10px !important;
             z-index: 1000;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px;
+            background-color: #2196F3 !important;
+            color: white !important;
+            border: none !important;
+            padding: 6px 10px !important;
             border-radius: 4px;
             cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+            font-size: 0.9rem !important;
+            text-decoration: none;
+            transition: all 0.3s ease !important;
+        }
+
+        .menu-toggle {
+            left: 15px;
+        }
+
+        .back-button {
+            right: 15px;
+        }
+
+        .menu-toggle:hover, .back-button:hover {
+            background-color: #1976D2 !important;
+        }
+
+        /* 移动端适配 */
+        @media screen and (max-width: 768px) {
+            .menu-toggle, .back-button {
+                top: 8px !important;
+                padding: 4px 8px !important;
+                font-size: 0.85rem !important;
+            }
         }
 
         /* 响应式设计 */
@@ -180,7 +203,8 @@
             }
 
             .menu-toggle {
-                display: block;
+                top: 5px !important;
+                padding: 4px 8px;
             }
 
             .sidebar {
@@ -220,10 +244,9 @@
             }
 
             .back-button {
-                top: 10px;
-                right: 15px;
-                padding: 8px 16px;
-                font-size: 14px;
+                top: 5px !important;
+                padding: 4px 10px !important;
+                font-size: 0.85rem;
             }
 
             .chapter-title {
@@ -298,7 +321,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* 遮���层 */
+        /* 遮罩层 */
         .overlay {
             display: none;
             position: fixed;
@@ -312,6 +335,83 @@
 
         .overlay.active {
             display: block;
+        }
+
+        /* 修改顶部导航栏的样式 */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #4CAF50;
+            padding: 30px 20px 15px 20px !important;
+            z-index: 900;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .chapter-indicator {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            padding: 0 20px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .back-button {
+            position: absolute !important;
+            right: 15px !important;
+            top: 10px !important;
+            background-color: #2196F3 !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 4px;
+            padding: 6px 12px !important;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            z-index: 1;
+            transition: all 0.3s ease !important;
+        }
+
+        .back-button:hover {
+            background-color: #1976D2 !important;
+        }
+
+        /* 移动端适配 */
+        @media screen and (max-width: 768px) {
+            .top-nav {
+                padding: 25px 20px 12px 20px !important;
+            }
+            
+            .chapter-indicator {
+                font-size: 1rem;
+                padding: 0 10px;
+            }
+            
+            .back-button {
+                top: 1px !important;
+            }
+            
+            .menu-toggle {
+                top: 8px !important;
+            }
+        }
+
+        /* 暗色模式支持 */
+        @media (prefers-color-scheme: dark) {
+            .top-nav {
+                background-color: #2d2d2d;
+            }
         }
     </style>
     <script src="./loadQuestions.js"></script>
@@ -331,10 +431,16 @@
         </ul>
     </div>
 
-    <!-- 主内容区 -->
+    <!-- 顶部导航栏 -->
+    <div class="top-nav">
+        <div class="chapter-indicator">第一章 选择题</div>
+        <a href="index.html" class="back-button">
+            返回主页 →
+        </a>
+    </div>
+
+    <!-- 修改主内容区，移���原有的回按钮和题 -->
     <div class="main-content">
-        <a href="index.html" class="back-button">返回主页</a>
-        <h1>选择题</h1>
         <div id="questions-container">
             <!-- 题目将通过JavaScript动态加载 -->
         </div>
@@ -346,7 +452,7 @@
             chapter1: "第一章 HTML基础",
             chapter2: "第二章 JSP基础",
             chapter3: "第三章 JSP内置对象",
-            chapter4: "第四章 Session管理",
+            chapter4: "第四章 Session管",
             chapter5: "第五章 JavaBean技术",
             chapter6: "第六章 Servlet技术"
         };
@@ -395,15 +501,13 @@
             
             if (!questionsData || !questionsData[chapterId] || !questionsData[chapterId].length) {
                 container.innerHTML = '<p>该章节暂无题目</p>';
-                console.log('No questions found for chapter:', chapterId);
                 return;
             }
             
-            // 添加章节标题
-            const chapterTitle = document.createElement('h2');
-            chapterTitle.className = 'chapter-title';
-            chapterTitle.textContent = chapterTitles[chapterId] || `第${chapterId.replace('chapter', '')}章`;
-            container.appendChild(chapterTitle);
+            // 更新顶部导航栏的章节标题
+            const chapterIndicator = document.querySelector('.chapter-indicator');
+            const chapterTitle = chapterTitles[chapterId] || `第${chapterId.replace('chapter', '')}章`;
+            chapterIndicator.textContent = `${chapterTitle} 选择题`;
             
             console.log(`Loading ${questionsData[chapterId].length} questions for chapter ${chapterId}`);
             
@@ -420,7 +524,7 @@
                     <h3>${questionText}</h3>
                     ${options.map(opt => `<div>${opt}</div>`).join('')}
                     <button class="show-answer-btn" onclick="toggleAnswer(this)">显示答案</button>
-                    <div class="answer" style="display: none;">答案：${q.answer}</div>
+                    <div class="answer" style="display: none;">案：${q.answer}</div>
                 `;
                 container.appendChild(questionDiv);
             });
