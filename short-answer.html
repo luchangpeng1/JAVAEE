@@ -250,6 +250,32 @@
                 font-size: 1.5rem;
             }
         }
+
+        /* 添加淡入动画 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 优化下拉框禁用状态样式 */
+        .controls select:disabled {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* 深色模式适配 */
+        @media (prefers-color-scheme: dark) {
+            .controls select:disabled {
+                background-color: #3d3d3d;
+            }
+        }
     </style>
 </head>
 <body>
@@ -308,7 +334,7 @@
             },
             {
                 chapter: "第三章",
-                title: "2. 如果有3个用户访问一个JSP页面，则该JSP页面中的Java程序片将被行几次？",
+                title: "2. 如���有3个用户访问一个JSP页面，则该JSP页面中的Java程序片将被行几次？",
                 answer: "3次"
             },
             {
@@ -346,7 +372,7 @@
             {
                 chapter: "第四章",
                 title: "4. session 对象的生命周期依赖于哪些因素?",
-                answer: "用户是否关闭浏览器；\n\nsession对象是否调用invalidate()方法；\n\nsession对象是否达到设置的最长发呆时间。"
+                answer: "用户是否关闭浏览器；\n\nsession对象是否调用invalidate()方法；\n\nsession对象是否达到设置的最长发呆时间��"
             },
             {
                 chapter: "第四章",
@@ -368,7 +394,7 @@
             {
                 chapter: "第六章",
                 title: "3. 简述Servlet的生命周期与运行原理。",
-                answer: "Servlet 的生命周期包括初始化（init()）、请求处理（service()）和销毁（destroy()）。客户端请求时，容器调用 service() 处理请求并返回响应。应用结束时，容器调用 destroy() 进行清理。"
+                answer: "Servlet 的生命周期包���初始化（init()）、请求处理（service()）和销毁（destroy()）。客户端请求时，容器调用 service() 处理请求并返回响应。应用结束时，容器调用 destroy() 进行清理。"
             },
             {
                 chapter: "第六章",
@@ -390,7 +416,7 @@
             {
                 chapter: "第七章",
                 title: "3. 浏览器禁用Cookie后，如何进行会话跟踪？",
-                answer: "当不能确定客户端浏览器是否支持Cookie的情况下，使用URL重写技术可以对请求的URL地址追加会话标识，从而实现用户的会话跟踪功能。"
+                answer: "当不能确定客户端浏器是否支持Cookie的情况下，使用URL重写技术可以对请求的URL地址追加会话标识，从而实现用户的会话跟踪功能。"
             },
 
             // 第八章
@@ -406,7 +432,7 @@
             },
             {
                 chapter: "第八章",
-                title: "3. 过滤器���以实现哪些常用功能？",
+                title: "3. 过滤器以实现哪些常用功能？",
                 answer: "1.编码过滤：设置请求和响应的字符编码。\n\n2.判断登录状态：检查用户是否登录未登录则重定向。\n\n3.日志记录：记录请求信息，如 URL 和时间。\n\n4.权限检查：验证用户是否有权限访问资源。"
             },
             {
@@ -429,7 +455,7 @@
             {
                 chapter: "第十章",
                 title: "2. 文件下载实现方法有哪些？它们的优缺点是什么？",
-                answer: "1.通过超链接下载，简单但暴露文件位置且只能下载应用目录下的文件；\n\n2.通过程序编码下载，提供更高的安全性，可以控制访问并支持从任意位置（包括数据库）下载文件。"
+                answer: "1.通过超链接下载，简单但暴露文件位置且只能下载应用目录下的文件；\n\n2.通过程序编码下载，���供更高的安全性，可以控制访问并支持从任意位置（包括数据库）下载文件。"
             },
 
             // 第十一章
@@ -479,7 +505,7 @@
             },
             {
                 chapter: "第十五章",
-                title: "3. 举例说明数据绑定的优点。",
+                title: "3. 举例说明数据绑定的优点",
                 answer: "数据绑定的优点在于简化了从请求参数到对象属性的转换。"
             },
             {
@@ -494,22 +520,48 @@
             }
         ];
 
-        // 获取所有章节
+        // 获取所有章节并排序
         function getChapters() {
             const chapters = new Set();
             questions.forEach(q => chapters.add(q.chapter));
-            return Array.from(chapters);
+            const sortedChapters = Array.from(chapters).sort((a, b) => {
+                // 安全地提取章节中的数字
+                const getChapterNum = (str) => {
+                    const match = str.match(/\d+/);
+                    return match ? parseInt(match[0]) : 0;
+                };
+                
+                const numA = getChapterNum(a);
+                const numB = getChapterNum(b);
+                return numA - numB;
+            });
+            console.log('Sorted chapters:', sortedChapters);
+            return sortedChapters;
         }
 
         // 初始化章节下拉框
         function initializeChapterSelect() {
             const select = document.getElementById('chapterSelect');
-            getChapters().forEach(chapter => {
+            if (!select) {
+                console.error('Chapter select element not found!');
+                return;
+            }
+            
+            // 清空现有选项
+            select.innerHTML = '<option value="">选择章节...</option>';
+            
+            // 获取排序后的章节列表
+            const chapters = getChapters();
+            
+            // 添加章节选项
+            chapters.forEach(chapter => {
                 const option = document.createElement('option');
                 option.value = chapter;
                 option.textContent = chapter;
                 select.appendChild(option);
             });
+            
+            console.log('Initialized chapters:', select.options.length); // 添加调试日志
         }
 
         // 根据选中的章节更新题目下拉框
@@ -517,24 +569,31 @@
             const select = document.getElementById('questionSelect');
             select.innerHTML = '<option value="">选择题目...</option>';
             
-            if (!chapter) return;
+            if (!chapter) {
+                select.disabled = true;
+                clearQuestion();
+                return;
+            }
             
-            questions.forEach((q, index) => {
-                if (q.chapter === chapter) {
-                    const option = document.createElement('option');
-                    option.value = index;
-                    option.textContent = q.title;
-                    select.appendChild(option);
-                }
+            select.disabled = false;
+            // 获取当前章节的所有题目
+            const chapterQuestions = questions.filter(q => q.chapter === chapter);
+            
+            // 添加题目选项
+            chapterQuestions.forEach((q, index) => {
+                const option = document.createElement('option');
+                option.value = questions.indexOf(q); // 使用在整体数组中的索引
+                option.textContent = q.title;
+                select.appendChild(option);
             });
         }
 
-        // 初始化下拉框
-        function initializeSelects() {
-            initializeChapterSelect();
-            document.getElementById('chapterSelect').addEventListener('change', function() {
-                updateQuestionSelect(this.value);
-            });
+        // 清空当前显示的题目
+        function clearQuestion() {
+            document.getElementById('questionTitle').textContent = '';
+            document.getElementById('userAnswer').value = '';
+            document.getElementById('answer').style.display = 'none';
+            document.getElementById('answer').textContent = '';
         }
 
         // 显示选中的题目
@@ -543,6 +602,8 @@
             const index = select.value;
             if (index !== "") {
                 displayQuestion(questions[index]);
+            } else {
+                clearQuestion();
             }
         }
 
@@ -550,18 +611,39 @@
         function showRandomQuestion() {
             const randomIndex = Math.floor(Math.random() * questions.length);
             const question = questions[randomIndex];
+            
+            // 更新章节选择
             document.getElementById('chapterSelect').value = question.chapter;
+            
+            // 更新题目选择
             updateQuestionSelect(question.chapter);
             document.getElementById('questionSelect').value = randomIndex;
-            displayQuestion(questions[randomIndex]);
+            
+            // 显示题目
+            displayQuestion(question);
+            
+            // 添加动画效果
+            const questionContainer = document.querySelector('.question-container');
+            questionContainer.style.animation = 'none';
+            questionContainer.offsetHeight; // 触发重绘
+            questionContainer.style.animation = 'fadeIn 0.5s ease-in-out';
         }
 
         // 显示题目
         function displayQuestion(question) {
-            document.getElementById('questionTitle').textContent = `${question.chapter} - ${question.title}`;
-            document.getElementById('userAnswer').value = '';
-            document.getElementById('answer').style.display = 'none';
-            document.getElementById('answer').textContent = question.answer;
+            if (!question) return;
+            
+            const titleElem = document.getElementById('questionTitle');
+            const userAnswerElem = document.getElementById('userAnswer');
+            const answerElem = document.getElementById('answer');
+            
+            titleElem.textContent = `${question.chapter} - ${question.title}`;
+            userAnswerElem.value = '';
+            answerElem.style.display = 'none';
+            answerElem.textContent = question.answer;
+            
+            // 聚焦到答题框
+            userAnswerElem.focus();
         }
 
         // 切换显示答案
@@ -574,10 +656,36 @@
             }
         }
 
-        // 面加载时初始化
+        // 初始化事件监听
+        function initializeEventListeners() {
+            const chapterSelect = document.getElementById('chapterSelect');
+            const questionSelect = document.getElementById('questionSelect');
+            
+            if (!chapterSelect || !questionSelect) {
+                console.error('Select elements not found!');
+                return;
+            }
+            
+            // 章节选择变化时更新题目下拉框
+            chapterSelect.addEventListener('change', function(e) {
+                console.log('Chapter selected:', this.value); // 添加调试日志
+                updateQuestionSelect(this.value);
+            });
+            
+            // 题目选择变化时显示选中的题目
+            questionSelect.addEventListener('change', showSelectedQuestion);
+        }
+
+        // 页面加载时初始化
         window.onload = function() {
-            initializeSelects();
-            document.getElementById('questionSelect').addEventListener('change', showSelectedQuestion);
+            console.log('Page loaded'); // 添加调试日志
+            initializeChapterSelect();
+            initializeEventListeners();
+            // 初始禁用题目选择框
+            const questionSelect = document.getElementById('questionSelect');
+            if (questionSelect) {
+                questionSelect.disabled = true;
+            }
         };
     </script>
 </body>
