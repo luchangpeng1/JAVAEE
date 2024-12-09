@@ -455,7 +455,7 @@ D. close()
 2. 下列选项中，对 Servlet 描述错误的是()。
 A. Servlet 是一个特殊的 Java 类，它必须直接或间接实现 Servlet 接口
 B. Servlet接口定义了Servlet的生命周期方法
-c.多个客户请求一个Servlet时，服务器为每一个客户启动一个进程
+C.多个客户请求一个Servlet时，服务器为每一个客户启动一个进程
 D.Servlet客户线程调用service方法响应客户的请求
 答案：C
 
