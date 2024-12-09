@@ -29,6 +29,8 @@
             border-radius: 15px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             margin: 10px;
+            opacity: 0;
+            animation: fadeIn 0.3s ease forwards;
         }
 
         h1 {
@@ -39,10 +41,12 @@
         }
 
         .button-container {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
-            padding: 10px;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
         .button {
@@ -57,6 +61,7 @@
             transition: all 0.3s ease;
             border: none;
             -webkit-tap-highlight-color: transparent;
+            min-width: unset;
         }
 
         .button:active {
@@ -81,13 +86,55 @@
 
         @media screen and (min-width: 768px) {
             .button-container {
-                flex-direction: row;
-                justify-content: center;
+                grid-template-columns: repeat(4, 1fr);
             }
 
             .button {
-                min-width: 200px;
+                min-width: unset;
             }
+        }
+
+        /* JDBC练习按钮特殊样式 */
+        .jdbc-button {
+            background: linear-gradient(145deg, #1a73e8, #1557b0);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .jdbc-button:active {
+            background: linear-gradient(145deg, #1557b0, #1a73e8);
+        }
+
+        /* 新功能标记 */
+        .new-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff4081;
+            color: white;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            transform: scale(0.8);
+            animation: pulse 2s infinite;
+        }
+
+        /* 添加动画效果 */
+        @keyframes pulse {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(0.9); }
+            100% { transform: scale(0.8); }
+        }
+
+        /* 添加页面切换动画 */
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -98,7 +145,33 @@
             <a href="choice.html" class="button">选择题</a>
             <a href="short-answer.html" class="button">简答题</a>
             <a href="programming.html" class="button">程序题</a>
+            <a href="jdbc-practice.html" class="button jdbc-button">
+                JDBC练习
+                <span class="new-badge">新</span>
+            </a>
         </div>
     </div>
+
+    <script>
+        document.querySelectorAll('.button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                
+                // 添加退出动画
+                document.querySelector('.container').style.animation = 'fadeOut 0.3s ease forwards';
+                
+                // 延迟跳转等待动画完成
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 300);
+            });
+        });
+
+        // 添加进入动画
+        window.addEventListener('load', () => {
+            document.querySelector('.container').style.animation = 'fadeIn 0.3s ease forwards';
+        });
+    </script>
 </body>
 </html> 
