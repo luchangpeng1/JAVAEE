@@ -413,6 +413,37 @@
                 background-color: #2d2d2d;
             }
         }
+
+        .question div.option {
+            cursor: pointer;
+        }
+
+        .question div.correct {
+            background-color: #c8e6c9;
+            color: #2e7d32;
+            border: 1px solid #81c784;
+        }
+
+        .question div.wrong {
+            background-color: #ffcdd2;
+            color: #c62828;
+            border: 1px solid #e57373;
+        }
+
+        /* 暗色模式支持 */
+        @media (prefers-color-scheme: dark) {
+            .question div.correct {
+                background-color: #1b5e20;
+                color: #a5d6a7;
+                border: 1px solid #2e7d32;
+            }
+
+            .question div.wrong {
+                background-color: #b71c1c;
+                color: #ffcdd2;
+                border: 1px solid #c62828;
+            }
+        }
     </style>
     <script src="./loadQuestions.js"></script>
 </head>
@@ -439,7 +470,7 @@
         </a>
     </div>
 
-    <!-- 修改主内容区，移���原有的回按钮和题 -->
+    <!-- 修改主内容区，移原有的回按钮和题 -->
     <div class="main-content">
         <div id="questions-container">
             <!-- 题目将通过JavaScript动态加载 -->
@@ -522,9 +553,8 @@
                 
                 questionDiv.innerHTML = `
                     <h3>${questionText}</h3>
-                    ${options.map(opt => `<div>${opt}</div>`).join('')}
-                    <button class="show-answer-btn" onclick="toggleAnswer(this)">显示答案</button>
-                    <div class="answer" style="display: none;">案：${q.answer}</div>
+                    ${options.map((opt, i) => `<div class="option" data-index="${i}" onclick="checkAnswer(this, '${q.answer}', ${index})">${opt}</div>`).join('')}
+                    <div class="answer" style="display: none;">答案：${q.answer}</div>
                 `;
                 container.appendChild(questionDiv);
             });
@@ -537,18 +567,6 @@
             
             // 滚动到顶部
             window.scrollTo(0, 0);
-        }
-
-        // 切换答案显示/隐藏
-        function toggleAnswer(btn) {
-            const answerDiv = btn.nextElementSibling;
-            if (answerDiv.style.display === 'none' || !answerDiv.style.display) {
-                answerDiv.style.display = 'block';
-                btn.textContent = '隐藏答案';
-            } else {
-                answerDiv.style.display = 'none';
-                btn.textContent = '显示答案';
-            }
         }
 
         // 为导航链接添加点击事件
@@ -595,6 +613,37 @@
                 }
             });
         });
+
+        function checkAnswer(optionElement, correctAnswer, questionIndex) {
+            const questionDiv = optionElement.closest('.question');
+            const allOptions = questionDiv.querySelectorAll('.option');
+            const answerDiv = questionDiv.querySelector('.answer');
+            
+            // 已经选择过答案的题目不再响应点击
+            if (questionDiv.dataset.answered) {
+                return;
+            }
+            
+            // 标记题目已作答
+            questionDiv.dataset.answered = 'true';
+            
+            // 获取当前选项的序号（A、B、C、D）
+            const optionIndex = optionElement.dataset.index;
+            const selectedAnswer = String.fromCharCode(65 + parseInt(optionIndex)); // 将数字转换为对应的字母
+            
+            // 显示正确答案
+            answerDiv.style.display = 'block';
+            
+            // 标记所有选项的正确性
+            allOptions.forEach((option, index) => {
+                const currentAnswer = String.fromCharCode(65 + index);
+                if (currentAnswer === correctAnswer) {
+                    option.classList.add('correct');
+                } else if (index === parseInt(optionIndex) && currentAnswer !== correctAnswer) {
+                    option.classList.add('wrong');
+                }
+            });
+        }
     </script>
 </body>
 </html> 
