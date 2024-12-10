@@ -439,7 +439,7 @@ A. name
 B. property
 C. value
 D. 以上皆不会出现
-答案：B
+答案：C
 
 
 
